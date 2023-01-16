@@ -1,0 +1,32 @@
+version: "3"
+services:
+  backend-app:
+    build: .
+    ports:
+      - "8080:8080"
+    networks:
+      - network
+    depends_on:
+      - dbpostgresql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://dbpostgresql:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgresPassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  dbpostgresql:
+    image: 'postgres:12.2'
+
+    ports:
+      - "5300:5432"
+
+    environment:
+      - POSTGRES_PASSWORD=postgresPassword
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge

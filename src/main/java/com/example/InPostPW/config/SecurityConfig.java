@@ -54,22 +54,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/note/get").permitAll()
                 .antMatchers("/api/registration/**").permitAll().and()
                 .addFilter(customAuthenticationFilter)
-                .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
     }
 
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.headers()
-                .xssProtection()
-                .and()
-                .contentSecurityPolicy("script-src 'self'");
-        return http.build();
     }
 }
 
