@@ -19,7 +19,8 @@ public class NoteController {
 
 
     @PostMapping("/note/new")
-    public ResponseEntity<?> createNewNote(@RequestBody NewNoteForm newNoteForm) {
+    public ResponseEntity<?> createNewNote(@RequestBody NewNoteForm newNoteForm) throws InterruptedException {
+        //Thread.sleep(3000);
         if (newNoteForm.note != null && newNoteForm.token != null) {
             noteService.createNewNote(newNoteForm, newNoteForm.token);
         }
@@ -27,7 +28,8 @@ public class NoteController {
     }
 
     @PostMapping("/note/get")
-    public ResponseEntity<?> getNotes(@RequestBody GetNoteForm getNoteForm) {
+    public ResponseEntity<?> getNotes(@RequestBody GetNoteForm getNoteForm) throws InterruptedException {
+        //Thread.sleep(3000);
         if (getNoteForm.token != null) {
             return new ResponseEntity<>(noteService.getNotes(getNoteForm), HttpStatus.OK);
         }

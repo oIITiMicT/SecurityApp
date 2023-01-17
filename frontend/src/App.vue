@@ -1,7 +1,7 @@
 <template>
   <div>
-    <textarea @input="updateTheLogin($event.target.value)" name="Login" placeholder="Email"></textarea>
-    <textarea @input="updateThePassword($event.target.value)" name="Password" placeholder="Password"></textarea>
+    <input id="login" name="login" placeholder="Login" @input="updateTheLogin($event.target.value)">
+    <input type="password" id="password" name="password" placeholder="Password" @input="updateThePassword($event.target.value)">
     <br>
     <Button label=Login icon="pi pi-times"
             @click="loginFunction" class="button button-white"/>
@@ -22,7 +22,7 @@
       <br>
       <tbody>
       <tr v-for="item in notes">
-        <td v-html="item"></td>
+        <td>{{item}}</td>
       </tr>
       </tbody>
     </div>

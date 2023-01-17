@@ -22,7 +22,8 @@ public class UserController {
     private final NewUserBuilder userBuilder;
 
     @PostMapping("/registration")
-    public ResponseEntity<?> registerUser(@RequestBody RegistrationFormDto registrationForm) {
+    public ResponseEntity<?> registerUser(@RequestBody RegistrationFormDto registrationForm) throws InterruptedException {
+        //Thread.sleep(3000);
         User user = userBuilder.createNewUser(registrationForm);
         userService.saveUser(user);
         return new ResponseEntity<>(HttpStatus.CREATED);
