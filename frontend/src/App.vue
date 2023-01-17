@@ -143,8 +143,6 @@ export default {
       axios.post("http://localhost:8080/api/note/get", postData, axiosConfig)
           .then((res) => {
             this.encrypteds = res.data;
-            console.log(res);
-            console.log(this.encrypteds);
             this.decodeNotes();
           })
           .catch((err) => {
@@ -152,16 +150,13 @@ export default {
     },
 
     async decodeNotes() {
-      console.log("start");
       this.notes = [];
-      console.log(this.encrypteds);
       let i = 0;
 
       while (i < this.encrypteds.length) {
         this.notes[i] = CryptoJS.AES.decrypt(this.encrypteds[i].text, this.secretKey).toString(CryptoJS.enc.Utf8);
         i++;
       }
-      console.log(this.notes);
     }
   }
 }
