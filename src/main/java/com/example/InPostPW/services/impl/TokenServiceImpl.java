@@ -1,5 +1,9 @@
 package com.example.InPostPW.services.impl;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.InPostPW.exception.InvalidTokenException;
 import com.example.InPostPW.services.TokenService;
 import org.json.JSONException;
@@ -22,6 +26,10 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public String getSubjectFromToken(String token) throws JSONException {
+        Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
+        JWTVerifier verifier = JWT.require(algorithm).build();
+        DecodedJWT decodedJWT = verifier.verify(token);
+        System.out.println(decodedJWT.getSubject());
         String[] chunks = token.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String payload = new String(decoder.decode(chunks[1]));

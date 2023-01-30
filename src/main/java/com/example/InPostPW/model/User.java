@@ -36,10 +36,6 @@ public class User {
     @JsonIgnore
     private String password;
 
-    @Column(name="salt")
-    @JsonIgnore
-    private String salt;
-
     @OneToMany(cascade = CascadeType.MERGE)
     @JoinColumn(name="author_id")
     @JsonIgnore

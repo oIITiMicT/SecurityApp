@@ -40,7 +40,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         String username = null;
         String password;
         Authentication authentication = null;
-        String salt = "";
 
         try {
             JsonNode json = new ObjectMapper().readTree(request.getReader());
@@ -50,10 +49,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             username = json.get("email").asText();
             password = json.get("password").asText();
             Optional<User> user = userService.findUserByEmail(username);
-            if (user.isPresent()) {
-                salt = user.get().getSalt();
-            }
-            password = salt + password;
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(username, password);
             authentication = authenticationManager.authenticate(authenticationToken);
@@ -68,11 +63,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         UserDetails user = (UserDetails)authResult.getPrincipal();
-        Map<String, String> tokens = userTokenProvider.provide(user.getUsername());
-        response.setHeader(ACCESS_TOKEN, tokens.get(ACCESS_TOKEN));
-        response.setHeader(REFRESH_TOKEN, tokens.get(REFRESH_TOKEN));
+        String token = userTokenProvider.provide(user.getUsername());
+        response.setHeader(ACCESS_TOKEN, token);
         response.addHeader("Vary", "Access-Control-Expose-Headers");
         response.setHeader("Access-Control-Expose-Headers", ACCESS_TOKEN);
-        response.setHeader("Access-Control-Expose-Headers", REFRESH_TOKEN);
     }
 }

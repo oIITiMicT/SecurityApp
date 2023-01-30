@@ -33,7 +33,7 @@ public class UserTokenProviderImpl implements UserTokenProvider {
 
 
     @Override
-    public Map<String, String> provide(String username) {
+    public String provide(String username) {
         UserDetails userDetails = userService.loadUserByUsername(username);
         Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
         Map<String, String> tokens = new HashMap<>();
@@ -42,14 +42,8 @@ public class UserTokenProviderImpl implements UserTokenProvider {
                 .withExpiresAt(new Date(System.currentTimeMillis() + Long.parseLong(accessTokenDurationMS)))
                 .withClaim("role", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
-        String refreshToken = JWT.create()
-                .withSubject(userDetails.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + Long.parseLong(refreshTokenDurationMS)))
-                .withClaim("role", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .sign(algorithm);
-        tokens.put(ACCESS_TOKEN, accessToken);
-        tokens.put(REFRESH_TOKEN, refreshToken);
-        return tokens;
+                tokens.put(ACCESS_TOKEN, accessToken);
+        return accessToken;
     }
 
     private Date accessTokenExpiration() {

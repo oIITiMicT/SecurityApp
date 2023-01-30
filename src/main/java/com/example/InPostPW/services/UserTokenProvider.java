@@ -4,5 +4,5 @@ import java.util.Map;
 
 public interface UserTokenProvider {
 
-    Map<String, String> provide(String username);
+    String provide(String username);
 }

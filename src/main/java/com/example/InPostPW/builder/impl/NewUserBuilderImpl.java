@@ -2,6 +2,7 @@ package com.example.InPostPW.builder.impl;
 
 import com.example.InPostPW.builder.NewUserBuilder;
 import com.example.InPostPW.dto.RegistrationFormDto;
+import com.example.InPostPW.model.Role;
 import com.example.InPostPW.model.User;
 import com.example.InPostPW.services.RoleService;
 import com.example.InPostPW.validation.FormsValidation;
@@ -23,25 +24,18 @@ public class NewUserBuilderImpl implements NewUserBuilder {
     private final FormsValidation formsValidation;
 
 
-    private String generateSalt() {
-        byte[] array = new byte[5];
-        Random random = new Random(System.nanoTime());
-        random.nextBytes(array);
-        return new String(array, StandardCharsets.UTF_8);
-    }
-
     //TODO builder
     @Override
     public User createNewUser(RegistrationFormDto registrationForm) {
+        Role role = new Role();
+        role.setName("user");
+        roleService.saveRole(role);
         formsValidation.validateRegistrationForm(registrationForm);
         User user = new User();
-        String salt = generateSalt();
-        String securityPassword = salt + registrationForm.getPassword();
-        user.setPassword(passwordEncoder.encode(securityPassword));
+        user.setPassword(passwordEncoder.encode(registrationForm.getPassword()));
         user.setEmail(registrationForm.getEmail());
         user.setRole(roleService.findRoleByName("user").get());
         user.setNotes(new ArrayList<>());
-        user.setSalt(salt);
         return user;
     }
 }
