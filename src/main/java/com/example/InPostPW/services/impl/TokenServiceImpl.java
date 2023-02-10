@@ -29,7 +29,6 @@ public class TokenServiceImpl implements TokenService {
         Algorithm algorithm = Algorithm.HMAC256(secretKey.getBytes());
         JWTVerifier verifier = JWT.require(algorithm).build();
         DecodedJWT decodedJWT = verifier.verify(token);
-        System.out.println(decodedJWT.getSubject());
         String[] chunks = token.split("\\.");
         Base64.Decoder decoder = Base64.getUrlDecoder();
         String payload = new String(decoder.decode(chunks[1]));

@@ -35,11 +35,6 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        int sum = 0;
-        for (int i = 0; i < 1e9; i++) {
-            sum = i + 1;
-        }
-        sum = sum - 4;
         String accessToken = request.getHeader("accessToken");
         String refreshToken = request.getHeader("refreshToken");
         if (request.getServletPath().matches("/api/login|/api/registration|/api/note/new|/api/note/get")
@@ -73,12 +68,10 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                         DecodedJWT decodedJWT = verifier.verify(refreshToken);
                         String subjectRefresh = decodedJWT.getSubject();
                         if (subjectRefresh.equals(subjectAccess)) {
-                            Map<String, String> tokens = userTokenProvider.provide(subjectAccess);
-                            response.setHeader(ACCESS_TOKEN, tokens.get(ACCESS_TOKEN));
-                            response.setHeader(REFRESH_TOKEN, tokens.get(REFRESH_TOKEN));
+                            String token = userTokenProvider.provide(subjectAccess);
+                            response.setHeader(ACCESS_TOKEN, token);
                             response.addHeader("Vary", "Access-Control-Expose-Headers");
                             response.setHeader("Access-Control-Expose-Headers", ACCESS_TOKEN);
-                            response.setHeader("Access-Control-Expose-Headers", REFRESH_TOKEN);
                             String[] roles = decodedJWT.getClaim("role").asArray(String.class);
                             List<GrantedAuthority> authorities
                                     = Arrays.stream(roles).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
@@ -87,18 +80,14 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                             filterChain.doFilter(request, response);
                         } else {
-                            System.out.println("HERE");
                             response.setStatus(403);
                             response.getWriter().println("Error with token.");
                         }
                     } catch (Exception exception) {
-                        System.out.println(exception);
-                        System.out.println("OR HERE");
                         response.setStatus(403);
                         response.getWriter().println("Error with token.");
                     }
                 } else {
-                    System.out.println("THEN HERE");
                     response.setStatus(403);
                     response.getWriter().println("Error with token.");
                 }

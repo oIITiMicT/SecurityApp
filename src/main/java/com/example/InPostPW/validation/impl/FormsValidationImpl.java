@@ -20,7 +20,6 @@ public class FormsValidationImpl implements FormsValidation {
 
     private final UserService userService;
 
-    //TODO Field name
     @Override
     public void validateRegistrationForm(RegistrationFormDto registrationForm) {
         final String email = registrationForm.getEmail();

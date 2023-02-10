@@ -36,6 +36,22 @@ public class User {
     @JsonIgnore
     private String password;
 
+    @Column(name="attempts")
+    @JsonIgnore
+    private int attempts;
+
+    @Column(name="email_block")
+    @JsonIgnore
+    private int emailBlock;
+
+    @Column(name="status")
+    @JsonIgnore
+    private int status;
+
+    @Column(name="unblock_code")
+    @JsonIgnore
+    private String unblockCode;
+
     @OneToMany(cascade = CascadeType.MERGE)
     @JoinColumn(name="author_id")
     @JsonIgnore

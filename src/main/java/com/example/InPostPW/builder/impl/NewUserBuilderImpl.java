@@ -24,18 +24,22 @@ public class NewUserBuilderImpl implements NewUserBuilder {
     private final FormsValidation formsValidation;
 
 
-    //TODO builder
     @Override
     public User createNewUser(RegistrationFormDto registrationForm) {
-        Role role = new Role();
-        role.setName("user");
-        roleService.saveRole(role);
+        if (roleService.findRoleByName("user").isEmpty()) {
+            Role role = new Role();
+            role.setName("user");
+            roleService.saveRole(role);
+        }
         formsValidation.validateRegistrationForm(registrationForm);
         User user = new User();
         user.setPassword(passwordEncoder.encode(registrationForm.getPassword()));
         user.setEmail(registrationForm.getEmail());
         user.setRole(roleService.findRoleByName("user").get());
         user.setNotes(new ArrayList<>());
+        user.setStatus(1);
+        user.setAttempts(0);
+        user.setEmailBlock(1);
         return user;
     }
 }

@@ -2,6 +2,7 @@ package com.example.InPostPW.config;
 
 import com.example.InPostPW.filter.CustomAuthenticationFilter;
 import com.example.InPostPW.filter.CustomAuthorizationFilter;
+import com.example.InPostPW.services.EmailSender;
 import com.example.InPostPW.services.UserService;
 import com.example.InPostPW.services.UserTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final UserTokenProvider userTokenProvider;
     private final UserService userService;
+    private final EmailSender emailSender;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -40,14 +42,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter =
-                new CustomAuthenticationFilter(authenticationManagerBean(), userService, userTokenProvider);
+                new CustomAuthenticationFilter(authenticationManagerBean(), userService, emailSender, passwordEncoder, userTokenProvider);
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         CustomAuthorizationFilter customAuthorizationFilter =
                 new CustomAuthorizationFilter(userTokenProvider, secret);
 
         http
                 .cors().and().csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers("/api/login").permitAll()
                 .antMatchers("/api/note/new").permitAll()
